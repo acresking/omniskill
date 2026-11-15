@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniSkill — The Universal AI Skill Converter</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --card-bg: #1e293b;
+      --border: #334155;
+      --primary: #38bdf8;
+      --primary-hover: #0ea5e9;
+      --text: #f8fafc;
+      --text-muted: #94a3b8;
+      --accent: #a855f7;
+      --success: #22c55e;
+      --warning: #f59e0b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      background: #090d16;
+      border-bottom: 1px solid var(--border);
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .badge {
+      background: rgba(56, 189, 248, 0.15);
+      color: var(--primary);
+      font-size: 0.75rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 9999px;
+      font-weight: 600;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+    .header-links {
+      display: flex;
+      gap: 1rem;
+    }
+    .header-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.2s;
+    }
+    .header-link:hover { color: var(--text); }
+    main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      padding: 1.5rem 2rem;
+      max-width: 1600px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .pane {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+    }
+    .pane-header {
+      padding: 0.85rem 1.25rem;
+      background: rgba(15, 23, 42, 0.6);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .pane-title {
+      font-size: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .controls {
+      display: flex;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    select, button {
+      background: #0f172a;
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.45rem 0.85rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s;
+    }
+    select:hover, button:hover {
+      border-color: var(--primary);
+    }
+    button.btn-primary {
+      background: var(--primary);
+      color: #0f172a;
+      font-weight: 600;
+      border: none;
+    }
+    button.btn-primary:hover {
+      background: var(--primary-hover);
+    }
+    textarea {
+      flex: 1;
+      width: 100%;
+      background: #0b1120;
+      color: #e2e8f0;
+      border: none;
+      padding: 1.25rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88rem;
+      line-height: 1.5;
+      resize: none;
+      outline: none;
+    }
+    .tab-bar {
+      display: flex;
+      background: #090d16;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .tab-btn {
+      background: transparent;
+      border: none;
+      border-bottom: 2px solid transparent;
+      border-radius: 0;
+      color: var(--text-muted);
+      padding: 0.65rem 1.1rem;
+      font-weight: 500;
+      font-size: 0.85rem;
+      white-space: nowrap;
+    }
+    .tab-btn:hover {
+      color: var(--text);
+    }
+    .tab-btn.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      background: rgba(56, 189, 248, 0.05);
+    }
+    .output-viewer {
+      flex: 1;
+      background: #0b1120;
+      padding: 1.25rem;
+      overflow-y: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88rem;
+      white-space: pre-wrap;
+      color: #e2e8f0;
+    }
+    .scores-card {
+      padding: 0.75rem 1.25rem;
+      background: rgba(15, 23, 42, 0.8);
+      border-top: 1px solid var(--border);
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      font-size: 0.8rem;
+    }
+    .score-item {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+    }
+    .footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      border-top: 1px solid var(--border);
+      background: #090d16;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">
+      <span>⚡ OmniSkill</span>
+      <span class="badge">Universal AI Converter</span>
+    </div>
+    <div class="header-links">
+      <span style="font-size: 0.85rem; color: var(--text-muted);">Supports Claude, Gemini, GPT, Grok, Muse & Cursor</span>
+    </div>
+  </header>
+
+  <main>
+    <!-- Left: Input Area -->
+    <div class="pane">
+      <div class="pane-header">
+        <div class="pane-title">
+          <span>Input Skill</span>
+        </div>
+        <div class="controls">
+          <select id="sampleSelect" onchange="loadSample(this.value)">
+            <option value="">Load Sample Skill...</option>
+            <option value="weather">Claude: Weather Researcher</option>
+            <option value="git">Antigravity: Git Hygiene</option>
+            <option value="sql">OpenAI: SQL Query Optimizer</option>
+          </select>
+          <select id="sourceFormat">
+            <option value="auto">Auto-Detect</option>
+            <option value="claude">Claude Code (SKILL.md)</option>
+            <option value="gemini">Google Gemini / Antigravity</option>
+            <option value="openai">OpenAI ChatGPT / Custom GPT</option>
+            <option value="grok">xAI Grok</option>
+            <option value="muse">Muse / OpenWebUI / Ollama</option>
+            <option value="cursor">Cursor AI (.cursorrules)</option>
+          </select>
+          <button class="btn-primary" onclick="convert()">⚡ Convert</button>
+        </div>
+      </div>
+      <textarea id="inputCode" placeholder="Paste your skill content here (SKILL.md, YAML frontmatter, OpenAPI spec, Modelfile, or instructions)..."></textarea>
+      <div class="scores-card" id="inspectionCard">
+        <span>Ready to analyze and convert.</span>
+      </div>
+    </div>
+
+    <!-- Right: Output Area -->
+    <div class="pane">
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('claude')">🟣 Claude Code</button>
+        <button class="tab-btn" onclick="switchTab('gemini')">🔵 Gemini / Antigravity</button>
+        <button class="tab-btn" onclick="switchTab('openai')">🟢 OpenAI GPTs</button>
+        <button class="tab-btn" onclick="switchTab('grok')">⚫ xAI Grok</button>
+        <button class="tab-btn" onclick="switchTab('muse')">🟠 Muse / OpenWebUI</button>
+        <button class="tab-btn" onclick="switchTab('cursor')">🔷 Cursor Rules</button>
+        <button class="tab-btn" onclick="switchTab('all')">📦 Universal Bundle</button>
+      </div>
+      <div class="pane-header" style="background: transparent; border-bottom: 1px solid var(--border);">
+        <div id="outputFilename" style="font-size: 0.85rem; color: var(--primary); font-family: monospace;">SKILL.md</div>
+        <div class="controls">
+          <button onclick="copyOutput()">📋 Copy</button>
+          <button onclick="downloadOutput()">💾 Download</button>
+        </div>
+      </div>
+      <div class="output-viewer" id="outputCode">// Converted skill code will appear here.</div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    OmniSkill — Open Source Universal AI Skill Engine. Built for Google Antigravity, Claude Code, OpenAI GPTs, xAI Grok & Muse.
+  </footer>
+
+  <script>
+    let activeTarget = 'claude';
+    let conversionCache = {};
+
+    const samples = {
+      weather: `---
+name: weather-researcher
+description: Real-time global meteorological analysis and climate impact reporter.
+version: 1.0.0
+tools:
+  - name: get_current_weather
+    description: Fetch temperature, humidity, wind, and forecast for coordinates.
+    parameters:
+      type: object
+      properties:
+        location:
+          type: string
+          description: City name or geographic coordinates.
+---
+
+# Weather Researcher
+
+You are a professional meteorologist and climate researcher.
+
+## Directives
+- Provide structured weather reports with temperature in both Celsius and Fahrenheit.
+- Detail atmospheric conditions, barometric pressure, and precipitation risks.
+- Highlight severe weather warnings prominently.
+
+## Quick Start & Examples
+- "Check current forecast for Tokyo"
+- "Analyze hurricane pressure trends"
+`,
+      git: `---
+name: git-hygiene
+description: Master git assistant for clean branch rebase, bisect, and atomic commits.
+---
+
+# Git Hygiene Assistant
+
+You specialize in maintainable git workflows, commit cleanliness, and conflict resolution.
+
+## Guidelines
+- Always favor atomic, single-purpose commits with semantic messages.
+- Suggest interactive rebasing with safety backups prior to force pushing.
+`,
+      sql: `{
+  "name": "SQL Query Optimizer",
+  "description": "Analyzes complex SQL queries and suggests indexing and execution plan improvements.",
+  "instructions": "You are a database tuning specialist. Review queries, spot table scans, and recommend composite indexes.",
+  "conversation_starters": [
+    "Optimize this slow PostgreSQL join query",
+    "Explain EXPLAIN ANALYZE output"
+  ]
+}`
+    };
+
+    function loadSample(key) {
+      if (!key || !samples[key]) return;
+      document.getElementById('inputCode').value = samples[key];
+      convert();
+    }
+
+    async function convert() {
+      const content = document.getElementById('inputCode').value.trim();
+      if (!content) return;
+      const from = document.getElementById('sourceFormat').value;
+
+      try {
+        const res = await fetch('/api/convert', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content, from, target: 'all' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          conversionCache = data.result;
+          updateOutputView();
+          inspect(content, from);
+        } else {
+          document.getElementById('outputCode').textContent = 'Error: ' + data.error;
+        }
+      } catch (e) {
+        document.getElementById('outputCode').textContent = 'Request failed: ' + e.message;
+      }
+    }
+
+    async function inspect(content, from) {
+      try {
+        const res = await fetch('/api/inspect', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ content, from })
+        });
+        const data = await res.json();
+        if (data.success) {
+          const report = data.report;
+          const card = document.getElementById('inspectionCard');
+          card.innerHTML = `
+            <span><strong>${report.displayName}</strong> (~${report.metrics.estimatedTokens} tokens)</span>
+            <div class="score-item"><span class="dot"></span> Claude: ${report.compatibility.claude}%</div>
+            <div class="score-item"><span class="dot"></span> Gemini: ${report.compatibility.gemini}%</div>
+            <div class="score-item"><span class="dot"></span> OpenAI: ${report.compatibility.openai}%</div>
+            <div class="score-item"><span class="dot"></span> Grok: ${report.compatibility.grok}%</div>
+            <div class="score-item"><span class="dot"></span> Muse: ${report.compatibility.muse}%</div>
+          `;
+        }
+      } catch {}
+    }
+
+    function switchTab(target) {
+      activeTarget = target;
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      event.target.classList.add('active');
+      updateOutputView();
+    }
+
+    function updateOutputView() {
+      if (!conversionCache.files) return;
+      const targetPrefix = activeTarget === 'all' ? '' : activeTarget + '/';
+      const file = conversionCache.files.find(f => activeTarget === 'all' ? f.path === 'README.md' : f.path.startsWith(targetPrefix));
+      if (file) {
+        document.getElementById('outputFilename').textContent = file.path;
+        document.getElementById('outputCode').textContent = file.content;
+      }
+    }
+
+    function copyOutput() {
+      const code = document.getElementById('outputCode').textContent;
+      navigator.clipboard.writeText(code);
+      alert('Copied to clipboard!');
+    }
+
+    function downloadOutput() {
+      const filename = document.getElementById('outputFilename').textContent;
+      const code = document.getElementById('outputCode').textContent;
+      const blob = new Blob([code], { type: 'text/plain' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = filename.split('/').pop() || 'skill-output.txt';
+      a.click();
+    }
+
+    // Auto-load initial sample
+    loadSample('weather');
+  </script>
+</body>
+</html>
