@@ -1,12 +1,20 @@
 {
   "name": "omniskill",
-  "version": "1.1.0",
-  "description": "The Universal AI Skill Converter — Convert Claude Code skills, Google Gemini/Antigravity, ChatGPT/GPTs, xAI Grok, Muse & Cursor seamlessly.",
+  "version": "1.3.0",
+  "description": "The Universal Cross-Platform AI Skill Engine — Transpile skills between Claude Code, Google Gemini, ChatGPT, xAI Grok, Perplexity, DeepSeek, Qwen, Ollama, LM Studio, and Cursor with security hardening.",
   "type": "module",
   "main": "./src/index.js",
   "bin": {
     "omniskill": "./bin/omniskill.js"
   },
+  "files": [
+    "bin",
+    "src",
+    "sdk",
+    "SKILL.md",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "test": "node --test test/*.test.js",
     "start": "node bin/omniskill.js serve",
@@ -27,9 +35,14 @@
     "custom-gpts",
     "grok",
     "xai",
+    "perplexity",
+    "deepseek",
+    "qwen",
+    "kimi",
+    "ollama",
+    "lmstudio",
     "muse",
     "openwebui",
-    "ollama",
     "cursor",
     "skills",
     "agent-skills",
@@ -44,6 +57,11 @@
     "type": "git",
     "url": "https://github.com/acresking/omniskill.git"
   },
+  "os": [
+    "win32",
+    "darwin",
+    "linux"
+  ],
   "engines": {
     "node": ">=18.0.0"
   }
