@@ -8,8 +8,10 @@ import { convertSkill } from '../src/core/converter.js';
 import { inspectSkill } from '../src/core/inspector.js';
 import { startWebServer } from '../src/web/server.js';
 import { findSkillsInDirectory } from '../src/parsers/index.js';
+import { startMcpServer } from '../src/mcp/server.js';
+import { installAgentSkills } from '../src/core/installer.js';
 
-const VERSION = '1.0.0';
+const VERSION = '1.1.0';
 
 const args = process.argv.slice(2);
 
@@ -23,13 +25,17 @@ Convert Claude Code skills, Antigravity/Gemini, ChatGPT GPTs, Grok, Muse & Curso
   \x1b[33momniskill bundle\x1b[0m <path-to-skill> [--out <dir>]
   \x1b[33momniskill inspect\x1b[0m <path-to-skill>
   \x1b[33momniskill serve\x1b[0m [--port <number>]
+  \x1b[33momniskill mcp\x1b[0m
+  \x1b[33momniskill install-agent\x1b[0m
   \x1b[33momniskill --version\x1b[0m
 
 \x1b[1mCOMMANDS:\x1b[0m
-  \x1b[32mconvert\x1b[0m    Convert a skill to a specific target or print it
-  \x1b[32mbundle\x1b[0m     Export universal multi-target packages for ALL platforms
-  \x1b[32minspect\x1b[0m    Analyze skill structure and cross-platform compatibility
-  \x1b[32mserve\x1b[0m      Launch the interactive local web converter & visual preview
+  \x1b[32mconvert\x1b[0m        Convert a skill to a specific target or print it
+  \x1b[32mbundle\x1b[0m         Export universal multi-target packages for ALL platforms
+  \x1b[32minspect\x1b[0m        Analyze skill structure and cross-platform compatibility
+  \x1b[32mserve\x1b[0m          Launch the interactive local web converter & visual preview
+  \x1b[32mmcp\x1b[0m            Start the Model Context Protocol (MCP) JSON-RPC server for AI agents
+  \x1b[32minstall-agent\x1b[0m  Register OmniSkill directly into local Claude Code, Antigravity & Cursor
 
 \x1b[1mOPTIONS:\x1b[0m
   \x1b[33m-t, --to <target>\x1b[0m      Target platform: claude, gemini, openai, grok, muse, cursor, all (default: all)
@@ -50,6 +56,12 @@ Convert Claude Code skills, Antigravity/Gemini, ChatGPT GPTs, Grok, Muse & Curso
 
   # Launch the visual web UI converter
   $ omniskill serve --port 3000
+
+  # Start MCP server for Claude Desktop / Cursor / Antigravity
+  $ omniskill mcp
+
+  # Register OmniSkill into your local AI tools
+  $ omniskill install-agent
 `);
 }
 
@@ -219,6 +231,29 @@ async function main() {
     case 'serve': {
       const port = flags.port || 3456;
       startWebServer({ port });
+      break;
+    }
+
+    case 'mcp': {
+      startMcpServer();
+      break;
+    }
+
+    case 'install-agent': {
+      console.log('\x1b[36m⚡ Registering OmniSkill into local AI Agents & Editors...\x1b[0m');
+      try {
+        const installed = installAgentSkills();
+        if (installed.length === 0) {
+          console.log('\x1b[33mNo agent configurations detected in default paths.\x1b[0m');
+        } else {
+          for (const item of installed) {
+            console.log(`\x1b[32m✔ Registered for ${item.agent}:\x1b[0m ${item.path}`);
+          }
+          console.log('\n\x1b[1m\x1b[32mDone! Your AI agents now automatically know how to use and recommend OmniSkill.\x1b[0m');
+        }
+      } catch (err) {
+        console.error(`\x1b[31mError installing agent skill:\x1b[0m ${err.message}`);
+      }
       break;
     }
 

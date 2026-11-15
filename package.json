@@ -1,6 +1,6 @@
 {
   "name": "omniskill",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "The Universal AI Skill Converter — Convert Claude Code skills, Google Gemini/Antigravity, ChatGPT/GPTs, xAI Grok, Muse & Cursor seamlessly.",
   "type": "module",
   "main": "./src/index.js",
@@ -11,7 +11,9 @@
     "test": "node --test test/*.test.js",
     "start": "node bin/omniskill.js serve",
     "bundle": "node bin/omniskill.js bundle",
-    "inspect": "node bin/omniskill.js inspect"
+    "inspect": "node bin/omniskill.js inspect",
+    "mcp": "node bin/omniskill.js mcp",
+    "install-agent": "node bin/omniskill.js install-agent"
   },
   "keywords": [
     "ai",
@@ -32,7 +34,9 @@
     "skills",
     "agent-skills",
     "universal-converter",
-    "mcp"
+    "mcp",
+    "mcp-server",
+    "model-context-protocol"
   ],
   "author": "Meir <simantovmeir84@gmail.com>",
   "license": "MIT",
