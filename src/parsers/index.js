@@ -158,7 +158,45 @@ function parseSkillDirectory(dirPath, options = {}) {
     return normalizeSkill(parseGeminiSkill(content, { ...options, fallbackName }));
   }
 
+  // Look for child skills if this is a multi-skill pack
+  const childSkills = findSkillsInDirectory(dirPath);
+  if (childSkills.length > 0) {
+    // If exactly 1 child skill, parse it
+    if (childSkills.length === 1) {
+      return parseSkill(childSkills[0].path, options);
+    }
+    // Return a composite representation or parse the first
+    return parseSkill(childSkills[0].path, options);
+  }
+
   throw new Error(`Directory ${dirPath} does not contain a recognized skill manifest (e.g. SKILL.md).`);
+}
+
+export function findSkillsInDirectory(dirPath) {
+  const results = [];
+  function walk(current) {
+    if (!fs.existsSync(current)) return;
+    const entries = fs.readdirSync(current, { withFileTypes: true });
+    for (const entry of entries) {
+      if (['node_modules', '.git', 'dist', 'coverage', '.system_generated', 'tests'].includes(entry.name)) {
+        continue;
+      }
+      const full = path.join(current, entry.name);
+      if (entry.isDirectory()) {
+        const skillMd = path.join(full, 'SKILL.md');
+        const geminiJson = path.join(full, 'gemini-extension.json');
+        if (fs.existsSync(skillMd)) {
+          results.push({ name: entry.name, path: skillMd });
+        } else if (fs.existsSync(geminiJson)) {
+          results.push({ name: entry.name, path: geminiJson });
+        } else {
+          walk(full);
+        }
+      }
+    }
+  }
+  walk(dirPath);
+  return results;
 }
 
 function getFallbackName(filename) {

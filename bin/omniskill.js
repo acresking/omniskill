@@ -7,6 +7,7 @@ import path from 'node:path';
 import { convertSkill } from '../src/core/converter.js';
 import { inspectSkill } from '../src/core/inspector.js';
 import { startWebServer } from '../src/web/server.js';
+import { findSkillsInDirectory } from '../src/parsers/index.js';
 
 const VERSION = '1.0.0';
 
@@ -135,6 +136,26 @@ async function main() {
       console.log(`\x1b[36m📦 Generating Universal Multi-Target Bundle for:\x1b[0m ${source}`);
 
       try {
+        if (fs.existsSync(source) && fs.statSync(source).isDirectory() && !fs.existsSync(path.join(source, 'SKILL.md'))) {
+          const childSkills = findSkillsInDirectory(source);
+          if (childSkills.length > 1) {
+            console.log(`\x1b[35mMulti-skill suite detected: Found ${childSkills.length} skills in repository.\x1b[0m\n`);
+            let totalFiles = 0;
+            for (const cs of childSkills) {
+              const subOut = path.join(outDir, cs.name);
+              const { skill, writtenFiles } = convertSkill(cs.path, {
+                from: flags.from,
+                to: 'all',
+                outDir: subOut
+              });
+              console.log(`  \x1b[32m✔ [${cs.name}]\x1b[0m ${skill.metadata.displayName} -> ${writtenFiles.length} files generated`);
+              totalFiles += writtenFiles.length;
+            }
+            console.log(`\n\x1b[32m✔ Successfully generated Universal Bundles for all ${childSkills.length} skills (${totalFiles} files) in ${path.resolve(outDir)}\x1b[0m`);
+            break;
+          }
+        }
+
         const { skill, writtenFiles } = convertSkill(source, {
           from: flags.from,
           to: 'all',
@@ -159,6 +180,20 @@ async function main() {
         process.exit(1);
       }
       try {
+        if (fs.existsSync(source) && fs.statSync(source).isDirectory() && !fs.existsSync(path.join(source, 'SKILL.md'))) {
+          const childSkills = findSkillsInDirectory(source);
+          if (childSkills.length > 1) {
+            console.log(`\n\x1b[1m\x1b[36mMulti-Skill Repository Report: ${path.basename(source)}\x1b[0m`);
+            console.log(`Found ${childSkills.length} individual skills:\n`);
+            for (const cs of childSkills) {
+              const report = inspectSkill(cs.path, { from: flags.from });
+              console.log(`  \x1b[33m• ${cs.name.padEnd(20)}\x1b[0m ${report.displayName.padEnd(25)} (~${String(report.metrics.estimatedTokens).padStart(5)} tokens) [Tools: ${report.metrics.toolCount}]`);
+            }
+            console.log(`\nTo convert all skills, run: omniskill bundle ${source} --out <dir>`);
+            break;
+          }
+        }
+
         const report = inspectSkill(source, { from: flags.from });
         console.log('\n\x1b[1m\x1b[36mSkill Inspection Report:\x1b[0m');
         console.log(`Name:        \x1b[33m${report.displayName} (${report.name})\x1b[0m`);

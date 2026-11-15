@@ -4,7 +4,7 @@
  * Programmatic JavaScript / Node.js API
  */
 
-export { parseSkill, detectFormat } from './parsers/index.js';
+export { parseSkill, detectFormat, findSkillsInDirectory } from './parsers/index.js';
 export { generateSkill, SUPPORTED_TARGETS } from './generators/index.js';
 export { convertSkill } from './core/converter.js';
 export { inspectSkill } from './core/inspector.js';
