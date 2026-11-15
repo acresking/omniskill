@@ -9,6 +9,8 @@ import { parseOpenAISkill } from './openai.js';
 import { parseGrokSkill } from './grok.js';
 import { parseMuseSkill } from './muse.js';
 import { parseCursorSkill } from './cursor.js';
+import { parsePerplexitySkill } from './perplexity.js';
+import { parseChineseSkill } from './chinese.js';
 import { normalizeSkill } from '../types/index.js';
 
 export function detectFormat(content, filename = '') {
@@ -20,11 +22,17 @@ export function detectFormat(content, filename = '') {
   if (lowerName.endsWith('.cursorrules') || lowerName.endsWith('.windsurfrules') || lowerName.endsWith('.mdc')) {
     return 'cursor';
   }
-  if (lowerName === 'modelfile' || lowerName.endsWith('.modelfile')) {
+  if (lowerName === 'modelfile' || lowerName.endsWith('.modelfile') || lowerName.includes('ollama')) {
     return 'muse';
   }
   if (lowerName.includes('grok')) {
     return 'grok';
+  }
+  if (lowerName.includes('perplexity') || lowerName.includes('sonar')) {
+    return 'perplexity';
+  }
+  if (lowerName.includes('deepseek') || lowerName.includes('qwen') || lowerName.includes('kimi')) {
+    return 'chinese';
   }
   if (lowerName.includes('gpt') || lowerName.includes('openapi') || lowerName.includes('assistant')) {
     return 'openai';
@@ -41,6 +49,8 @@ export function detectFormat(content, filename = '') {
         if (json.openapi || json.swagger) return 'openai';
         if (json.system_instruction) return 'gemini';
         if (json.tools && json.meta) return 'muse';
+        if (json.model && json.model.includes('sonar')) return 'perplexity';
+        if (json.model && (json.model.includes('deepseek') || json.model.includes('qwen'))) return 'chinese';
         if (json.instructions || (json.tools && json.tools[0]?.type === 'function')) return 'openai';
       } catch {}
     }
@@ -48,6 +58,16 @@ export function detectFormat(content, filename = '') {
     // Check Modelfile
     if (/^FROM\s+\w+/m.test(trimmed) && /SYSTEM\s+("""|")/m.test(trimmed)) {
       return 'muse';
+    }
+
+    // Check Perplexity collection markers
+    if (trimmed.includes('Perplexity Research Guidelines') || trimmed.includes('sonar-pro')) {
+      return 'perplexity';
+    }
+
+    // Check DeepSeek / Qwen markers
+    if (trimmed.includes('deepseek-reasoner') || trimmed.includes('Qwen:')) {
+      return 'chinese';
     }
 
     // Check Antigravity / Claude SKILL.md
@@ -104,6 +124,18 @@ export function parseSkill(source, options = {}) {
     case 'grok':
       rawSkill = parseGrokSkill(content, { ...options, fallbackName: getFallbackName(filename) });
       break;
+    case 'perplexity':
+      rawSkill = parsePerplexitySkill(content, { ...options, fallbackName: getFallbackName(filename) });
+      break;
+    case 'chinese':
+    case 'deepseek':
+    case 'qwen':
+    case 'kimi':
+      rawSkill = parseChineseSkill(content, { ...options, fallbackName: getFallbackName(filename) });
+      break;
+    case 'local':
+    case 'ollama':
+    case 'lmstudio':
     case 'muse':
     case 'openwebui':
     case 'ollama':
@@ -161,11 +193,9 @@ function parseSkillDirectory(dirPath, options = {}) {
   // Look for child skills if this is a multi-skill pack
   const childSkills = findSkillsInDirectory(dirPath);
   if (childSkills.length > 0) {
-    // If exactly 1 child skill, parse it
     if (childSkills.length === 1) {
       return parseSkill(childSkills[0].path, options);
     }
-    // Return a composite representation or parse the first
     return parseSkill(childSkills[0].path, options);
   }
 
