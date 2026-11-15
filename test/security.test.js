@@ -1,17 +1,20 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import path from 'node:path';
+import os from 'node:os';
 import { safeResolvePath, sanitizeSkillName, sanitizeObject } from '../src/core/security.js';
 
 test('safeResolvePath prevents directory traversal attacks', () => {
-  const baseDir = 'C:\\safe\\base';
+  // Use platform-independent temporary base directory
+  const baseDir = path.resolve(os.tmpdir(), 'safe_test_base');
 
-  // Safe path
+  // Safe path inside baseDir
   const safe = safeResolvePath(baseDir, 'subfolder/file.txt');
   assert.ok(safe.startsWith(baseDir));
 
-  // Traversal attack
+  // Traversal attack (trying to escape baseDir)
   assert.throws(() => {
-    safeResolvePath(baseDir, '../../windows/system32/cmd.exe');
+    safeResolvePath(baseDir, '../../outside_secret.txt');
   }, /Path traversal attempt detected/);
 
   // Null byte injection attack
