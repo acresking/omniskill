@@ -7,6 +7,10 @@ import { generateOpenAISkill } from './openai.js';
 import { generateGrokSkill } from './grok.js';
 import { generateMuseSkill } from './muse.js';
 import { generateCursorSkill } from './cursor.js';
+import { generatePerplexitySkill } from './perplexity.js';
+import { generateOllamaSkill } from './ollama.js';
+import { generateLMStudioSkill } from './lmstudio.js';
+import { generateChineseModelsSkill } from './chinese.js';
 import { generateUniversalBundle } from './bundle.js';
 
 export const SUPPORTED_TARGETS = [
@@ -15,6 +19,14 @@ export const SUPPORTED_TARGETS = [
   'openai',
   'gpt',
   'grok',
+  'perplexity',
+  'chinese',
+  'deepseek',
+  'qwen',
+  'kimi',
+  'local',
+  'ollama',
+  'lmstudio',
   'muse',
   'openwebui',
   'cursor',
@@ -39,9 +51,22 @@ export function generateSkill(skill, target = 'claude') {
     case 'grok':
     case 'xai':
       return generateGrokSkill(skill);
+    case 'perplexity':
+    case 'sonar':
+      return generatePerplexitySkill(skill);
+    case 'chinese':
+    case 'deepseek':
+    case 'qwen':
+    case 'kimi':
+      return generateChineseModelsSkill(skill);
+    case 'local':
+    case 'ollama':
+      return generateOllamaSkill(skill);
+    case 'lmstudio':
+    case 'jan':
+      return generateLMStudioSkill(skill);
     case 'muse':
     case 'openwebui':
-    case 'ollama':
       return generateMuseSkill(skill);
     case 'cursor':
     case 'windsurf':

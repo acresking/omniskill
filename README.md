@@ -77,7 +77,11 @@ The open source AI community is creating thousands of brilliant skills tailored 
 | **🔵 Google Gemini / Antigravity** | `SKILL.md`, `gemini-extension.json` | `SKILL.md` + full `gemini-extension.json` tool manifest |
 | **🟢 OpenAI / ChatGPT** | `instructions.md`, custom GPT config | `instructions.md`, `openapi_actions.json`, `custom_gpt_config.json` |
 | **⚫ xAI Grok** | `system_prompt.md`, tool schema | Tailored `system_prompt.md` + `grok_tools.json` |
-| **🟠 Muse / OpenWebUI / Ollama** | `Modelfile`, JSON tools | `Modelfile`, `tools.py` (Pydantic stub), `openwebui_export.json` |
+| **🔮 Perplexity AI** | Collection prompt / Sonar query | `perplexity_collection.md` + `sonar_api_config.json` |
+| **🇨🇳 DeepSeek & Chinese LLMs** | Markdown / API schemas | `deepseek/system_prompt.md` (R1/V3), `qwen_agent.json`, `kimi_system_prompt.md` |
+| **🖥️ Local Models (Ollama)** | `Modelfile`, JSON tools | Custom `Modelfile` (Llama 3.3/DeepSeek/Qwen) + `setup.sh`/`setup.bat` |
+| **🎛️ LM Studio & Jan.ai** | System prompt configs | `lmstudio_preset.json` + `system_prompt.txt` |
+| **🟠 Muse & OpenWebUI** | `Modelfile`, JSON tools | `Modelfile`, `tools.py` (Pydantic stub), `openwebui_export.json` |
 | **🔷 Cursor & Windsurf** | `.cursorrules`, `.mdc` | Project `.cursorrules` + `.cursor/rules/*.mdc` |
 | **📦 Universal Bundle** | *Any of the above* | Complete multi-directory package with unified `README.md` |
 
@@ -195,9 +199,9 @@ omni.convert("./SKILL.md", to="openai", out_dir="./dist-openai")
 ## 🌐 מבט מהיר בעברית
 
 > [!NOTE]
-> **OmniSkill** פותח במטרה לשבור את נעילת הסקילים של Claude Code ולאפשר לכל משתמש ומפתח להריץ כל סקיל בכל מודל וכלי AI קיים.
+> **OmniSkill** פותח במטרה לשבור את נעילת הסקילים של Claude Code ולאפשר לכל משתמש ומפתח להריץ כל סקיל בכל מודל וכלי AI קיים — בענן, מקומית ובמודלים בינלאומיים.
 
-* **תאימות מלאה:** ממיר סקילים בין Claude, Google Gemini, OpenAI GPTs, xAI Grok, Muse ו-Cursor.
+* **תאימות מקיפה:** תמיכה ב-Claude, Google Gemini, OpenAI GPTs, xAI Grok, **Perplexity AI**, **המודלים הסיניים המובילים (DeepSeek R1/V3, Alibaba Qwen, Moonshot Kimi)**, **מודלים מקומיים (Ollama, LM Studio, Jan.ai)** ו-Cursor.
 * **חבילה אוניברסלית בלחיצה אחת (`bundle`):** מייצר תיקיית הפצה מלאה עם כל הפורמטים בו-זמנית.
 * **שרת MCP מובנה:** מאפשר לסוכני AI להריץ את ההמרה ישירות מתוך סביבת העבודה.
 * **ממשק ויזואלי מקומי:** שרת ווב מובנה לתצוגה מקדימה והמרה חזותית.

@@ -81,6 +81,48 @@ test('convertSkill converts Claude to xAI Grok', () => {
   assert.equal(toolsObj.tools[0].function.name, 'lint_code');
 });
 
+test('convertSkill converts Claude to Perplexity AI', () => {
+  const { result } = convertSkill(sampleClaudeSkill, { from: 'claude', to: 'perplexity' });
+  assert.equal(result.platform, 'perplexity');
+
+  const collection = result.files.find(f => f.path === 'perplexity_collection.md');
+  const sonarApi = result.files.find(f => f.path === 'sonar_api_config.json');
+
+  assert.ok(collection.content.includes('Perplexity Research Guidelines'));
+  const sonar = JSON.parse(sonarApi.content);
+  assert.equal(sonar.model, 'sonar-pro');
+});
+
+test('convertSkill converts Claude to Chinese Models (DeepSeek & Qwen)', () => {
+  const { result } = convertSkill(sampleClaudeSkill, { from: 'claude', to: 'chinese' });
+  assert.equal(result.platform, 'chinese_models');
+
+  const deepseekPrompt = result.files.find(f => f.path === 'deepseek/system_prompt.md');
+  const deepseekApi = result.files.find(f => f.path === 'deepseek/deepseek_api.json');
+  const qwenAgent = result.files.find(f => f.path === 'qwen/qwen_agent.json');
+
+  assert.ok(deepseekPrompt.content.includes('Core Reasoning Directives'));
+  const dsApi = JSON.parse(deepseekApi.content);
+  assert.equal(dsApi.model, 'deepseek-reasoner');
+
+  const qwen = JSON.parse(qwenAgent.content);
+  assert.equal(qwen.name, 'code-reviewer');
+  assert.equal(qwen.tools.length, 1);
+});
+
+test('convertSkill converts Claude to Local Models (Ollama & LM Studio)', () => {
+  const { result: ollamaRes } = convertSkill(sampleClaudeSkill, { from: 'claude', to: 'ollama' });
+  assert.equal(ollamaRes.platform, 'ollama');
+  const modelfile = ollamaRes.files.find(f => f.path === 'Modelfile');
+  assert.ok(modelfile.content.includes('FROM llama3.3:latest'));
+
+  const { result: lmRes } = convertSkill(sampleClaudeSkill, { from: 'claude', to: 'lmstudio' });
+  assert.equal(lmRes.platform, 'lmstudio');
+  const preset = lmRes.files.find(f => f.path === 'lmstudio_preset.json');
+  const parsedPreset = JSON.parse(preset.content);
+  assert.equal(parsedPreset.name, 'Code Reviewer');
+});
+
 test('convertSkill converts Claude to Muse / OpenWebUI', () => {
   const { result } = convertSkill(sampleClaudeSkill, { from: 'claude', to: 'muse' });
   assert.equal(result.platform, 'muse');
@@ -113,6 +155,11 @@ test('convertSkill generates Universal Bundle for all platforms', () => {
   assert.ok(filePaths.includes('gemini/SKILL.md'));
   assert.ok(filePaths.includes('openai/instructions.md'));
   assert.ok(filePaths.includes('grok/system_prompt.md'));
+  assert.ok(filePaths.includes('perplexity/perplexity_collection.md'));
+  assert.ok(filePaths.includes('chinese/deepseek/system_prompt.md'));
+  assert.ok(filePaths.includes('chinese/qwen/qwen_agent.json'));
+  assert.ok(filePaths.includes('ollama/Modelfile'));
+  assert.ok(filePaths.includes('lmstudio/lmstudio_preset.json'));
   assert.ok(filePaths.includes('muse/Modelfile'));
   assert.ok(filePaths.includes('cursor/.cursorrules'));
 });
