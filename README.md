@@ -24,7 +24,7 @@ Many developers create skills tailored specifically for Claude Code (`SKILL.md`)
 
 ### Installation
 ```bash
-git clone https://github.com/simantovmeir84/omniskill.git
+git clone https://github.com/acresking/omniskill.git
 cd omniskill
 npm link  # makes 'omniskill' available globally in terminal
 ```

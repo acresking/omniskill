@@ -33,7 +33,7 @@ export function generateUniversalBundle(skill) {
 
   const readme = `# ${skill.metadata.displayName} (Universal AI Skill Package)
 
-> Generated with [OmniSkill](https://github.com/simantovmeir84/omniskill) — The Universal AI Skill Converter.
+> Generated with [OmniSkill](https://github.com/acresking/omniskill) — The Universal AI Skill Converter.
 
 ${skill.metadata.description}
 
