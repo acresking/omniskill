@@ -97,6 +97,18 @@ omniskill/
 
 ---
 
+## 🌐 מבט מהיר (Overview in Hebrew)
+
+**OmniSkill** הוא כלי קוד פתוח המאפשר להמיר סקילים שנוצרו עבור Claude Code (`SKILL.md`) ישירות לכלים ומודלים אחרים:
+* **Google Gemini & Antigravity** — יצירת הרחבות ומבנה סקילים מותאם.
+* **OpenAI ChatGPT / Custom GPTs** — הנחיות מותאמות ומפרט OpenAPI 3.1 לפעולות.
+* **xAI Grok** — סיסטם פרומפט ומפרטי קריאות פונקציה.
+* **Muse / OpenWebUI / Ollama** — קובץ Modelfile וכלי פייתון.
+* **Cursor & Windsurf** — קבצי חוקים `.cursorrules` ו-`.mdc`.
+* **Universal Bundle** — המרה בבת אחת לכל הפלטפורמות בו-זמנית.
+
+---
+
 ## License
 
 MIT License. Free for personal and commercial use.
