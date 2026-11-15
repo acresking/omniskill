@@ -1,7 +1,9 @@
 /**
  * OmniSkill - Universal AI Skill Converter
  *
- * Programmatic JavaScript / Node.js API
+ * @author acresking (https://github.com/acresking)
+ * @repository https://github.com/acresking/omniskill
+ * @license MIT
  */
 
 export { parseSkill, detectFormat, findSkillsInDirectory } from './parsers/index.js';

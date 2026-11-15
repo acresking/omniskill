@@ -18,6 +18,7 @@ const args = process.argv.slice(2);
 function printHelp() {
   console.log(`
 \x1b[1m\x1b[36mOmniSkill v${VERSION}\x1b[0m — The Universal AI Skill Converter
+Created by \x1b[33macresking\x1b[0m (https://github.com/acresking)
 Convert Claude Code skills, Antigravity/Gemini, ChatGPT GPTs, Grok, Muse & Cursor.
 
 \x1b[1mUSAGE:\x1b[0m
